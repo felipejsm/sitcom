@@ -1,52 +1,45 @@
 package com.nssp.sitcom.usecase.inbound;
 
 import com.nssp.sitcom.data.Sitcom;
-import com.nssp.sitcom.data.repository.SitcomRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-@Service
+@Component
 public class CreateAndGetSitcomImpl implements CreateAndGetSitcom {
-
-    private final SitcomRepository repository;
-
-    public CreateAndGetSitcomImpl(SitcomRepository repository) {
-        this.repository = repository;
-    }
-
-    private void generateSitcom() {
-        var sitcom = new Sitcom();
-        sitcom.setId(1234L);
-        sitcom.setGenre("Comedy");
-        sitcom.setName("Seinfeld");
-
-        this.repository.save(sitcom);
-
-        for (int i = 0, size = 10; i < size; i++) {
-            var id = UUID.randomUUID().getMostSignificantBits();
-            sitcom.setId(id);
-            sitcom.setGenre("Comedy");
-            sitcom.setName("Seinfeld - "+id);
-            this.repository.save(sitcom);
-
-        }
-
-
-    }
 
     @Override
     public Sitcom getSitcom() {
-        generateSitcom();
-        Optional<Sitcom> opSitcom = this.repository.findById(1234L);
-        return opSitcom.get();
+        var sitcom = new Sitcom();
+        sitcom.setId("my-id");
+        sitcom.setGenre("Comedy");
+        sitcom.setName("Seinfeld");
+        return sitcom;
     }
 
     @Override
     public Page<Sitcom> getPageSitcom(Pageable pageable) {
-        return this.repository.findAll(pageable);
+        List<Sitcom> myListOfSitcom = new ArrayList<>();
+        var sitcom = new Sitcom();
+        sitcom.setId("my-id");
+        sitcom.setGenre("Comedy");
+        sitcom.setName("Seinfeld");
+        myListOfSitcom.add(sitcom);
+        for (int i = 0, size = 10; i < size; i++) {
+            var id = UUID.randomUUID().getMostSignificantBits();
+            sitcom.setId("my-id"+id);
+            sitcom.setGenre("Comedy");
+            sitcom.setName("Seinfeld - "+id);
+            myListOfSitcom.add(sitcom);
+        }
+
+        Page<Sitcom> pages = new PageImpl<Sitcom>(myListOfSitcom, pageable, myListOfSitcom.size());
+
+        return pages;
     }
 }
